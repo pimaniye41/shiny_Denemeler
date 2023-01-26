@@ -31,14 +31,29 @@ server <- function(input, output) {
   
     output$plot <- renderPlot(
       {
-      f_dataset <- filter(dataset, dataset$Dates %in% input$year & 
+      f_dataset <- filter(dataset, 
+                          dataset$Dates %in% input$year & 
                             dataset$`Number of Employees` >=input$emp_int[1] & 
                             dataset$`Number of Employees` <= input$emp_int[2])
         ggplot(f_dataset,
                aes(x = `Number of Employees`, y = `Profit Margin`))+
-          geom_point(aes(color = Sector), show.legend = F)
+          geom_point(aes(color = Sector), show.legend = T)+
+          theme(
+            legend.text = element_text(size = 6,vjust = 0.5, hjust = 0.5, margin = margin(r = 11)), 
+            legend.position = "right",
+            legend.key.width = unit(0.1, "cm"),
+            legend.key.size = unit(0.1, "cm"),
+            legend.spacing = unit(0.01, "cm"))+
+          scale_colour_viridis_d(option = "turbo",
+                                 end = 1,
+                                 labels = scales::label_wrap(20),
+                                 guide = guide_legend(nrow = 16))+
+          lims(x = input$emp_int)+
+          labs(title = "Profit - No. of Employee",
+               subtitle = input$year)
     }
     )
 }
 
 shinyApp(ui = ui, server = server)
+
